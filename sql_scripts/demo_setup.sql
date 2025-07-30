@@ -12,7 +12,7 @@
     -- Switch to accountadmin role to create warehouse
     USE ROLE accountadmin;
 
-    create or replace role SF_Intelligence_Demo;
+    create role SF_Intelligence_Demo;
 
 
     SET current_user_name = CURRENT_USER();
@@ -65,10 +65,10 @@
 
 use role accountadmin;
     -- Create API Integration for GitHub (public repository access)
-    CREATE OR REPLACE API INTEGRATION git_api_integration
-        API_PROVIDER = git_https_api
-        API_ALLOWED_PREFIXES = ('https://github.com/NickAkincilar/')
-        ENABLED = TRUE;
+    --CREATE OR REPLACE API INTEGRATION git_api_integration
+      --  API_PROVIDER = git_https_api
+      --  API_ALLOWED_PREFIXES = ('https://github.com/NickAkincilar/')
+      --  ENABLED = TRUE;
 
 
 GRANT USAGE ON INTEGRATION GIT_API_INTEGRATION TO ROLE SF_Intelligence_Demo;
@@ -76,9 +76,9 @@ GRANT USAGE ON INTEGRATION GIT_API_INTEGRATION TO ROLE SF_Intelligence_Demo;
 
 use role SF_Intelligence_Demo;
     -- Create Git repository integration for the public demo repository
-    CREATE OR REPLACE GIT REPOSITORY SF_AI_DEMO_REPO
+    CREATE GIT REPOSITORY SF_AI_DEMO_REPO
         API_INTEGRATION = git_api_integration
-        ORIGIN = 'https://github.com/NickAkincilar/Snowflake_AI_DEMO.git';
+        ORIGIN = 'https://github.com/sfc-gh-akelkar/Snowflake_AI_DEMO.git';
 
     -- Create internal stage for copied data files
     CREATE OR REPLACE STAGE INTERNAL_DATA_STAGE
@@ -782,7 +782,7 @@ GRANT CREATE AGENT ON SCHEMA snowflake_intelligence.agents TO ROLE SF_Intelligen
 use role SF_Intelligence_Demo;
 -- CREATES A SNOWFLAKE INTELLIGENCE AGENT WITH MULTIPLE TOOLS
 
-CREATE OR REPLACE AGENT SNOWFLAKE_INTELLIGENCE.AGENTS.Company_Chatbot_Agent_Retail
+CREATE AGENT SNOWFLAKE_INTELLIGENCE.AGENTS.Company_Chatbot_Agent_Retail
 WITH PROFILE='{ "display_name": "Company Chatbot Agent - Retail" }'
     COMMENT=$$ This is an agent that can answer questions about company specific Sales, Marketing, HR & Finance questions. $$
 FROM SPECIFICATION $$
@@ -912,3 +912,9 @@ FROM SPECIFICATION $$
 }
 $$;
 
+SELECT SNOWFLAKE_INTELLIGENCE.AGENTS.COMPANY_CHATBOT_AGENT_RETAIL('What are our monthly sales for 2025?');
+
+select *
+from snowflake_intelligence.agents.config;
+
+SHOW AGENTS;
